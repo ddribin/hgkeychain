@@ -1,0 +1,43 @@
+About
+=====
+hgkeychain is an extension for mercurial that lets the user use the MacOS X keychain to store passwords for remote repositories.
+
+Requirements
+============
+Mac OS X 10.5 (should work on older OSes but only tested on 10.5)
+Python 2.5 (should work on older versions of Python but only tested on 2.5)
+Mercurial 0.9+ (works on 1.0 and 1.1)
+My Keychain Python Module (which in turn requires pyrex or cython to compile.)
+
+Installation
+============
+Make sure you have cython or pyrex installed (best way to install via easy_install, e.g. "easy_install cython"). 
+
+Run the Keychain setup script (the setup script will default to using cython if it is installed and fall back to using pyrex):
+
+	python setup.py install
+
+This will compile the Keychain module and install it to your site-packages directory. A precompiled Keychain.so _is_ included in case installing cython/pyrex is problematic. Copy this to a directory within your python path.
+
+Copy hgkeychain.py into your hgext directory. this is normally located at:
+
+	/Library/Python/2.5/site-packages/hgext
+	
+but could be located somewhere else depending on how you installed Mercurial.
+
+Edit your ~/.hgrc file to activate the extension:
+
+	[extensions]
+	hgkeychain=
+
+See http://www.selenic.com/mercurial/wiki/index.cgi/UsingExtensions for more information on installing and activating mercurial extensions.
+
+Usage
+=====
+Once properly installed and activated hgkeychain will allow mercurial to store and retrieve repository passwords using the user's keychain.
+
+You should generally embed the remote repository's username in the repository URL when performing a clone, push or pull operation. E.g.:
+
+	http://username@example.com/hg/repository
+
+If you try to clone, push or pull to a password protected repository mercurial will query the user's Keychain for the repository password. If no password is found, mercurial will prompt the user for the password (via the terminal) and then store the password in the Keychain.
