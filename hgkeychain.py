@@ -13,47 +13,21 @@ Edit your ~/.hgrc file to include:
 MacOSXKeychain=
 
 ### Notes
-Test on Mercurial 0.95 w/Python 2.5 on Mac OS 10.5
+Tested on Mercurial 0.95 w/Python 2.5 on Mac OS 10.5
+Tested on Mercurial 1.1 w/Python 2.5 on Mac OS 10.5
 '''
 
 import mercurial.demandimport
 mercurial.demandimport.disable() # TODO - this is probably very bad.
 
 from mercurial import (hg, repo)
+from mercurial.i18n import _
 
 try:
 	from mercurial.url import passwordmgr
 except:
 	from mercurial.httprepo import passwordmgr
 
-from mercurial.i18n import _
-
-import urlparse
-import urllib2
-import Keychain
-
-########################################################################################
-
-cmdtable = dict()
-
-# cmdtable = {
-#     # cmd name        function call
-#     "print-parents": (print_parents,
-#                      # see mercurial/fancyopts.py for all of the command
-#                      # flag options.
-#                      [('s', 'short', None, 'print short form'),
-#                       ('l', 'long', None, 'print long form')],
-#                      "hg print-parents [options] node")
-# }
-
-# def extsetup():
-# 	pass
-# 
-# def reposetup(ui, repo):
-# 	pass
-# 
-# def print_parents(ui, repo, node, **opts):
-# 	pass
 
 ########################################################################################
 
@@ -73,11 +47,31 @@ _find_user_password = passwordmgr.find_user_password
 
 class MyHTTPPasswordMgr(passwordmgr):
 	__metaclass__ = monkeypatch_class
+	url_replacements = None
+
+	def getExpressions(self):
+		import simplejson
+		import re
+
+		theExpressions = dict()
+
+		if self.url_replacements:
+			for name, value in self.url_replacements:
+				d = simplejson.loads(value)
+				thePattern = d['pattern']
+				theReplacement = d['replacement']
+				thePattern = re.compile(thePattern)
+				theExpressions[thePattern] = theReplacement
+		return theExpressions
+	expressions = property(getExpressions)
 
 	def find_user_password(self, realm, authuri):
+		import urlparse
+		import urllib2
+		import Keychain
+
 		authinfo = urllib2.HTTPPasswordMgrWithDefaultRealm.find_user_password(self, realm, authuri)
 		theUsername, thePassword = authinfo
-#		thePassword = thePassword if thePassword != '' else None
 
 		if not hasattr(self, '_cache'):
 			self._cache = {}
@@ -90,8 +84,15 @@ class MyHTTPPasswordMgr(passwordmgr):
 			theUsername = self.ui.prompt(_("user:"), default=None)
 
 		if not thePassword:
+			for theExpression, theReplacement in self.expressions.items():
+				theMatch = theExpression.match(str(authuri))
+				if theMatch:
+					authuri = theMatch.expand(theReplacement)
+					break
+
 			parsed_url = urlparse.urlparse(authuri)
 			port = parsed_url.port if parsed_url.port else 0
+		
 			thePassword, theKeychainItem = Keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
@@ -103,3 +104,10 @@ class MyHTTPPasswordMgr(passwordmgr):
 				self._cache[theKey] = (theUsername, thePassword)
 
 		return theUsername, thePassword
+
+########################################################################################
+
+cmdtable = dict()
+
+def uisetup(ui):
+	MyHTTPPasswordMgr.url_replacements = ui.configitems('hgkeychain_url_replacements')
