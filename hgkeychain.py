@@ -28,6 +28,9 @@ try:
 except:
 	from mercurial.httprepo import passwordmgr
 
+import logging
+
+logger = logging.getLogger('hgkeychain')
 
 ########################################################################################
 
@@ -87,17 +90,22 @@ class MyHTTPPasswordMgr(passwordmgr):
 			for theExpression, theReplacement in self.expressions.items():
 				theMatch = theExpression.match(str(authuri))
 				if theMatch:
-					authuri = theMatch.expand(theReplacement)
-					break
+					newauthuri = theMatch.expand(theReplacement)
+					if newauthuri:
+						logger.info('Replacing original URL of (%s) with (%s)' % (authuri, newauthuri))
+						authuri = newauthuri
+						break
 
 			parsed_url = urlparse.urlparse(authuri)
 			port = parsed_url.port if parsed_url.port else 0
 		
+			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, authuri))
 			thePassword, theKeychainItem = Keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
+					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, authuri))
 					Keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
 
 			if thePassword:
@@ -110,4 +118,8 @@ class MyHTTPPasswordMgr(passwordmgr):
 cmdtable = dict()
 
 def uisetup(ui):
+	theConfig = dict(ui.configitems('hgkeychain'))
+	if 'logging' in theConfig:
+		logger.setLevel(int(theConfig['logging']))
+
 	MyHTTPPasswordMgr.url_replacements = ui.configitems('hgkeychain_url_replacements')
