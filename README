@@ -17,7 +17,7 @@ Run the Keychain setup script (the setup script will default to using cython if 
 
 	python setup.py install
 
-This will compile the Keychain module and install it to your site-packages directory. A precompiled Keychain.so _is_ included in case installing cython/pyrex is problematic. Copy this to a directory within your python path.
+This will compile the Keychain module and install it to your site-packages directory.
 
 Copy hgkeychain.py into your hgext directory. this is normally located at:
 
