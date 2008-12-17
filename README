@@ -11,9 +11,9 @@ My Keychain Python Module (which in turn requires pyrex or cython to compile.)
 
 Installation
 ============
-Make sure you have cython or pyrex installed (best way to install via easy_install, e.g. "easy_install cython"). 
+Make sure you have cython installed http://cython.org/ (best way to install via pip or easy_install, e.g. "pip install cython" or "easy_install cython").
 
-Run the Keychain setup script (the setup script will default to using cython if it is installed and fall back to using pyrex):
+Run the Keychain setup script:
 
 	python setup.py install
 
@@ -22,7 +22,7 @@ This will compile the Keychain module and install it to your site-packages direc
 Copy hgkeychain.py into your hgext directory. this is normally located at:
 
 	/Library/Python/2.5/site-packages/hgext
-	
+
 but could be located somewhere else depending on how you installed Mercurial.
 
 Edit your ~/.hgrc file to activate the extension:
