@@ -32,6 +32,11 @@ import logging
 
 logger = logging.getLogger('hgkeychain')
 
+handler = logging.StreamHandler()
+formatter = logging.Formatter("%(levelname)-5s|%(name)s| %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 ########################################################################################
 
 #### From http://mail.python.org/pipermail/python-dev/2008-January/076194.html
@@ -78,7 +83,7 @@ class MyHTTPPasswordMgr(passwordmgr):
 
 		if not hasattr(self, '_cache'):
 			self._cache = {}
-	
+
 		theKey = (realm, authuri)
 		if theKey in self._cache:
 			return self._cache[theKey]
@@ -92,13 +97,13 @@ class MyHTTPPasswordMgr(passwordmgr):
 				if theMatch:
 					newauthuri = theMatch.expand(theReplacement)
 					if newauthuri:
-						logger.info('Replacing original URL of (%s) with (%s)' % (authuri, newauthuri))
+						logger.info('Replacing original URL of (%s) with (%s)' % (authuri if len(authuri) < 50 else authuri[:47] + '...' , newauthuri))
 						authuri = newauthuri
 						break
 
 			parsed_url = urlparse.urlparse(authuri)
 			port = parsed_url.port if parsed_url.port else 0
-		
+
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, authuri))
 			thePassword, theKeychainItem = Keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
