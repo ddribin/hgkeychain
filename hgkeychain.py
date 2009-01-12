@@ -31,7 +31,6 @@ except:
 import logging
 
 logger = logging.getLogger('hgkeychain')
-
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(levelname)-5s|%(name)s| %(message)s")
 handler.setFormatter(formatter)
