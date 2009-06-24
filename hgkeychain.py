@@ -57,7 +57,7 @@ class MyHTTPPasswordMgr(passwordmgr):
 	url_replacements = None
 
 	def getExpressions(self):
-		try
+		try:
 			import json
 		except:
 			import simplejson as json
