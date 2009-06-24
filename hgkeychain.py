@@ -57,14 +57,17 @@ class MyHTTPPasswordMgr(passwordmgr):
 	url_replacements = None
 
 	def getExpressions(self):
-		import simplejson
+		try
+			import json
+		except:
+			import simplejson as json
 		import re
 
 		theExpressions = dict()
 
 		if self.url_replacements:
 			for name, value in self.url_replacements:
-				d = simplejson.loads(value)
+				d = json.loads(value)
 				thePattern = d['pattern']
 				theReplacement = d['replacement']
 				thePattern = re.compile(thePattern)
