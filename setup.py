@@ -1,9 +1,11 @@
 from distutils.core import setup
 from distutils.extension import Extension
 
+from setuptools import setup, find_packages
+
 setup(
 	name = "hgkeychain",
-	version = '0.1.1',
+	version = '0.1.2',
 	author = 'Jonathan Wight',
 	author_email = 'jwight@mac.com',
 	url = 'http://toxicsoftware.com',
@@ -12,7 +14,6 @@ setup(
 	license = 'BSD',
 	requires = [],
 	py_modules = ['hgkeychain'],
-	install_requires = ['pykeychain'],
 	keywords = "mercurial hg version",
 	classifiers = [
 		'Development Status :: 4 - Beta',
@@ -26,4 +27,6 @@ setup(
 		],
 	platforms = 'MacOS X',
 
+	install_requires = ['pykeychain'],
+	zip_safe = False,
 	)
