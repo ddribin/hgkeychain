@@ -78,7 +78,7 @@ class MyHTTPPasswordMgr(passwordmgr):
 	def find_user_password(self, realm, authuri):
 		import urlparse
 		import urllib2
-		import Keychain
+		import keychain
 
 		authinfo = urllib2.HTTPPasswordMgrWithDefaultRealm.find_user_password(self, realm, authuri)
 		theUsername, thePassword = authinfo
@@ -107,13 +107,13 @@ class MyHTTPPasswordMgr(passwordmgr):
 			port = parsed_url.port if parsed_url.port else 0
 
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, authuri))
-			thePassword, theKeychainItem = Keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
+			thePassword, theKeychainItem = keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
 					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, authuri))
-					Keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
+					keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
 
 			if thePassword:
 				self._cache[theKey] = (theUsername, thePassword)

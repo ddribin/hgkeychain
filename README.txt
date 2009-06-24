@@ -4,21 +4,13 @@ hgkeychain is an extension for mercurial that lets the user use the MacOS X keyc
 
 Requirements
 ============
-Mac OS X 10.5 (should work on older OSes but only tested on 10.5)
-Python 2.5 (should work on older versions of Python but only tested on 2.5)
+Mac OS X 10.5+ (should work on older OSes but only tested on 10.5 and 10.6)
+Python 2.5 (should work on older versions of Python but only tested on 2.5 and 2.6)
 Mercurial 0.9+ (works on 1.0 and 1.1)
-My Keychain Python Module (which in turn requires pyrex or cython to compile.)
+My pykeychain Python Module
 
 Installation
 ============
-Make sure you have cython installed http://cython.org/ (best way to install via pip or easy_install, e.g. "pip install cython" or "easy_install cython").
-
-Run the Keychain setup script:
-
-	python setup.py install
-
-This will compile the Keychain module and install it to your site-packages directory.
-
 Copy hgkeychain.py into your hgext directory. this is normally located at:
 
 	/Library/Python/2.5/site-packages/hgext

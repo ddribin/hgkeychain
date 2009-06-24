@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>HierarchyData</key>
+	<array>
+		<string>DD0A3B62-E1FC-4ECD-B51A-9362F8CFC2DD</string>
+	</array>
+	<key>ProjectItems</key>
+	<dict>
+		<key>DD0A3B62-E1FC-4ECD-B51A-9362F8CFC2DD</key>
+		<dict>
+			<key>ItemData</key>
+			<dict>
+				<key>AliasData</key>
+				<data>
+				AAAAAAGUAAIAAQZDb2J3ZWIAAAAAAAAAAAAAAAAAAAAA
+				AAAAAADGSruQSCsAAAAqhzIKaGdrZXljaGFpbgAAAAAA
+				AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAACqIesXw3UwAAAAAAAAAAP//
+				//8AAAkgAAAAAAAAAAAAAAAAAAAABnB1YmxpYwAQAAgA
+				AMZK89AAAAARAAgAAMXxFYwAAAABABgAKocyACoZ3gAq
+				GP8AKhjRAAmYYgAAebEAAgBBQ29id2ViOlVzZXJzOnNj
+				aHdhOkRldmVsb3BtZW50OlNvdXJjZTpNZXJjdXJpYWw6
+				cHVibGljOmhna2V5Y2hhaW4AAA4AFgAKAGgAZwBrAGUA
+				eQBjAGgAYQBpAG4ADwAOAAYAQwBvAGIAdwBlAGIAEgA6
+				VXNlcnMvc2Nod2EvRGV2ZWxvcG1lbnQvU291cmNlL01l
+				cmN1cmlhbC9wdWJsaWMvaGdrZXljaGFpbgATAAEvAAAV
+				AAIADP//AAA=
+				</data>
+				<key>FileURL</key>
+				<string>file://localhost/Users/schwa/Development/Source/Mercurial/public/hgkeychain/</string>
+				<key>RelativePath</key>
+				<string>./</string>
+				<key>TypeID</key>
+				<string>_CFileLocator</string>
+				<key>Version</key>
+				<integer>1</integer>
+			</dict>
+			<key>ItemName</key>
+			<string>pykeychain</string>
+			<key>ItemType</key>
+			<string>FolderReference</string>
+		</dict>
+	</dict>
+	<key>com.barebones.DocumentFormatVersion</key>
+	<integer>5</integer>
+	<key>com.barebones.DocumentType</key>
+	<string>Project</string>
+</dict>
+</plist>
