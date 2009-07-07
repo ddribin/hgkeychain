@@ -20,7 +20,7 @@ Tested on Mercurial 1.1 w/Python 2.5 on Mac OS 10.5
 import mercurial.demandimport
 mercurial.demandimport.disable() # TODO - this is probably very bad.
 
-from mercurial import (hg, repo)
+from mercurial import (hg, repo, util)
 from mercurial.i18n import _
 
 try:
@@ -97,6 +97,10 @@ class MyHTTPPasswordMgr(passwordmgr):
 			if auth:
 				theUsername, thePassword = auth.get('username'), auth.get('password')
 		if not theUsername:
+			if not self.ui.interactive():
+				raise util.Abort(_('http authorization required'))
+			self.ui.write(_("http authorization required\n"))
+			self.ui.status(_("realm: %s\n") % realm)
 			theUsername = self.ui.prompt(_("user:"), default=None)
 
 		if not thePassword:
