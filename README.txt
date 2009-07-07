@@ -6,17 +6,19 @@ Requirements
 ============
 Mac OS X 10.5+ (should work on older OSes but only tested on 10.5 and 10.6)
 Python 2.5 (should work on older versions of Python but only tested on 2.5 and 2.6)
-Mercurial 0.9+ (works on 1.0 and 1.1)
+Mercurial 0.9+ (works on 1.0 through 1.3)
 My pykeychain Python Module
 
 Installation
 ============
-Copy hgkeychain.py into your hgext directory. this is normally located at:
+The easiest way to install hgkeychain is to use easy_install or pip:
 
-	/Library/Python/2.5/site-packages/hgext
+	sudo easy_install -U pykeychain
 
-but could be located somewhere else depending on how you installed Mercurial.
+(The sudo command may be optional depending on your machine's set up)
 
+Activation
+==========
 Edit your ~/.hgrc file to activate the extension:
 
 	[extensions]
@@ -36,7 +38,6 @@ If you try to clone, push or pull to a password protected repository mercurial w
 
 Configuration
 =============
-
 You can turn on logging to help debug problems like so:
 
 [hgkeychain]
