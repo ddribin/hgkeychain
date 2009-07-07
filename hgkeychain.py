@@ -80,6 +80,8 @@ class MyHTTPPasswordMgr(passwordmgr):
 		import urllib2
 		import keychain
 
+		logger.debug('find_user_password() %s %s', realm, authuri)
+
 		authinfo = urllib2.HTTPPasswordMgrWithDefaultRealm.find_user_password(self, realm, authuri)
 		theUsername, thePassword = authinfo
 
@@ -90,6 +92,10 @@ class MyHTTPPasswordMgr(passwordmgr):
 		if theKey in self._cache:
 			return self._cache[theKey]
 
+		if not theUsername:
+			auth = self.readauthtoken(authuri)
+			if auth:
+				theUsername, thePassword = auth.get('username'), auth.get('password')
 		if not theUsername:
 			theUsername = self.ui.prompt(_("user:"), default=None)
 

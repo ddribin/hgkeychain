@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
 	name = "hgkeychain",
-	version = '0.1.2',
+	version = '0.1.3',
 	author = 'Jonathan Wight',
 	author_email = 'jwight@mac.com',
 	url = 'http://toxicsoftware.com',
