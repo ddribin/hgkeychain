@@ -29,10 +29,21 @@ except:
 	from mercurial.httprepo import passwordmgr
 
 import logging
+import urlparse
+import urllib2
+import keychain
+
+try:
+	import json
+except:
+	import simplejson as json
+import re
+
+########################################################################################
 
 logger = logging.getLogger('hgkeychain')
 handler = logging.StreamHandler()
-formatter = logging.Formatter("%(levelname)-5s|%(name)s| %(message)s")
+formatter = logging.Formatter("hgkeychain: %(levelname)-5s|%(name)s| %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -57,12 +68,6 @@ class MyHTTPPasswordMgr(passwordmgr):
 	url_replacements = None
 
 	def getExpressions(self):
-		try:
-			import json
-		except:
-			import simplejson as json
-		import re
-
 		theExpressions = dict()
 
 		if self.url_replacements:
@@ -76,11 +81,8 @@ class MyHTTPPasswordMgr(passwordmgr):
 	expressions = property(getExpressions)
 
 	def find_user_password(self, realm, authuri):
-		import urlparse
-		import urllib2
-		import keychain
 
-		logger.debug('find_user_password() %s %s', realm, authuri)
+		logger.debug('find_user_password() %s %s', realm, (authuri if len(authuri) < 50 else authuri[:47] + '...'))
 
 		authinfo = urllib2.HTTPPasswordMgrWithDefaultRealm.find_user_password(self, realm, authuri)
 		theUsername, thePassword = authinfo
@@ -98,7 +100,7 @@ class MyHTTPPasswordMgr(passwordmgr):
 				theUsername, thePassword = auth.get('username'), auth.get('password')
 		if not theUsername:
 			if not self.ui.interactive():
-				raise util.Abort(_('http authorization required'))
+				raise util.Abort(_('hgkeychain: http authorization required'))
 			self.ui.write(_("http authorization required\n"))
 			self.ui.status(_("realm: %s\n") % realm)
 			theUsername = self.ui.prompt(_("user:"), default=None)
@@ -107,7 +109,10 @@ class MyHTTPPasswordMgr(passwordmgr):
 			for theExpression, theReplacement in self.expressions.items():
 				theMatch = theExpression.match(str(authuri))
 				if theMatch:
-					newauthuri = theMatch.expand(theReplacement)
+					try:
+						newauthuri = theMatch.expand(theReplacement)
+					except Exception, e:
+						raise util.Abort(_('hgkeychain: Could not expand expression'))
 					if newauthuri:
 						logger.info('Replacing original URL of (%s) with (%s)' % (authuri if len(authuri) < 50 else authuri[:47] + '...' , newauthuri))
 						authuri = newauthuri
