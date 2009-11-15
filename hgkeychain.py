@@ -18,7 +18,6 @@ Tested on Mercurial 1.1 w/Python 2.5 on Mac OS 10.5
 '''
 
 import mercurial.demandimport
-mercurial.demandimport.disable() # TODO - this is probably very bad.
 
 from mercurial import (hg, repo, util)
 from mercurial.i18n import _
