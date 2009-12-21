@@ -45,7 +45,7 @@ hgkeychain is aware of [auth] settings in your ~/.hgrc.  For example, if you hav
   bb.username = {username}
   bb.schemes =  http https
 
-The prefix is used to store your password in keychain, so all repositories with the same prefix will share the same keychain item.  This keeps your keychain from getting cluttered up with a single keychain item per repository.  Note that [auth] requires at least Mercurial verion 1.3.
+The prefix is used to store your password in keychain, so all repositories with the same prefix will share the same keychain item.  This keeps your keychain from getting cluttered up with a single keychain item per repository.  Note that [auth] requires at least Mercurial verion 1.3.  The old URL replacement regular expressions have been removed in support of [auth].
 
 You can turn on logging to help debug problems like so:
 
