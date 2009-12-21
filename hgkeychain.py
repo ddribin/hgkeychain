@@ -79,6 +79,18 @@ class MyHTTPPasswordMgr(passwordmgr):
 		return theExpressions
 	expressions = property(getExpressions)
 
+	def prefixUrl(self, base_url, prefix):
+		if not prefix or prefix == '*':
+			return base_url
+		scheme, hostpath = base_url.split('://', 1)
+		p = prefix.split('://', 1)
+		if len(p) > 1:
+			prefix_host_path = p[1]
+		else:
+			prefix_host_path = prefix
+		shortest_url = scheme + '://' + prefix_host_path
+		return shortest_url
+
 	def find_user_password(self, realm, authuri):
 
 		logger.debug('find_user_password() %s %s', realm, (authuri if len(authuri) < 50 else authuri[:47] + '...'))
@@ -89,20 +101,24 @@ class MyHTTPPasswordMgr(passwordmgr):
 		if not hasattr(self, '_cache'):
 			self._cache = {}
 
-		theKey = (realm, authuri)
-		if theKey in self._cache:
-			return self._cache[theKey]
+		auth = self.readauthtoken(authuri)
+		keychainUri = authuri
+		if auth:
+			keychainUri = self.prefixUrl(authuri, auth.get('prefix'))
+		logger.debug("auth url: %s, keychain url: %s\n" % (authuri, keychainUri) )
 
-		if not theUsername:
-			auth = self.readauthtoken(authuri)
-			if auth:
-				theUsername, thePassword = auth.get('username'), auth.get('password')
+		if not theUsername and auth:
+			theUsername, thePassword = auth.get('username'), auth.get('password')
 		if not theUsername:
 			if not self.ui.interactive():
 				raise util.Abort(_('hgkeychain: http authorization required'))
 			self.ui.write(_("http authorization required\n"))
 			self.ui.status(_("realm: %s\n") % realm)
 			theUsername = self.ui.prompt(_("user:"), default=None)
+
+		theKey = (realm, theUsername, keychainUri)
+		if theKey in self._cache:
+			return self._cache[theKey]
 
 		if not thePassword:
 			for theExpression, theReplacement in self.expressions.items():
@@ -117,16 +133,16 @@ class MyHTTPPasswordMgr(passwordmgr):
 						authuri = newauthuri
 						break
 
-			parsed_url = urlparse.urlparse(authuri)
+			parsed_url = urlparse.urlparse(keychainUri)
 			port = parsed_url.port if parsed_url.port else 0
 
-			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, authuri))
+			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
 			thePassword, theKeychainItem = keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
-					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, authuri))
+					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
 					keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
 
 			if thePassword:
