@@ -11,7 +11,7 @@ except ImportError:
 
 setup(
 	name = "hgkeychain",
-	version = '0.1.6',
+	version = '0.1.7',
 	author = 'Jonathan Wight',
 	author_email = 'jwight@mac.com',
 	url = 'http://toxicsoftware.com',
