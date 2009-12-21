@@ -15,6 +15,7 @@ MacOSXKeychain=
 ### Notes
 Tested on Mercurial 0.95 w/Python 2.5 on Mac OS 10.5
 Tested on Mercurial 1.1 w/Python 2.5 on Mac OS 10.5
+Tested on Mercurial 1.3 w/Python 2.6 on Mac OS 10.6
 '''
 
 import mercurial.demandimport
