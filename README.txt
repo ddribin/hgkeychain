@@ -38,18 +38,16 @@ If you try to clone, push or pull to a password protected repository mercurial w
 
 Configuration
 =============
+hgkeychain is aware of [auth] settings in your ~/.hgrc.  For example, if you have a BitBucket account, you could set this up as such:
+
+  [auth]
+  bb.prefix = bitbucket.org/
+  bb.username = {username}
+  bb.schemes =  http https
+
+The prefix is used to store your password in keychain, so all repositories with the same prefix will share the same keychain item.  This keeps your keychain from getting cluttered up with a single keychain item per repository.  Note that [auth] requires at least Mercurial verion 1.3.  The old URL replacement regular expressions have been removed in support of [auth].
+
 You can turn on logging to help debug problems like so:
 
-[hgkeychain]
-logging=1
-
-You can now map URL replacements to URL regular expressions. This is handy if you host a ton of repositories on a server and do NOT want your keychain cluttered up with a single keychain entry per repository.
-
-The following example maps all repositories hosted on "example.com" and "example.local" to "example", resulting in just the one keychain entry.
-
-(Note the syntax for this configuration is liable to change)
-
-[hgkeychain_url_replacements]
-url1 = {"pattern": "http://example\\.com/hg/.*)", "replacement": "http://example/hg/"}
-url2 = {"pattern": "http://example\\.local\\/hg/.*", "replacement": "http://example/hg/"}
-
+  [hgkeychain]
+  logging=1
