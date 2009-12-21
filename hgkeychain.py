@@ -64,20 +64,6 @@ _find_user_password = passwordmgr.find_user_password
 
 class MyHTTPPasswordMgr(passwordmgr):
 	__metaclass__ = monkeypatch_class
-	url_replacements = None
-
-	def getExpressions(self):
-		theExpressions = dict()
-
-		if self.url_replacements:
-			for name, value in self.url_replacements:
-				d = json.loads(value)
-				thePattern = d['pattern']
-				theReplacement = d['replacement']
-				thePattern = re.compile(thePattern)
-				theExpressions[thePattern] = theReplacement
-		return theExpressions
-	expressions = property(getExpressions)
 
 	def prefixUrl(self, base_url, prefix):
 		if not prefix or prefix == '*':
@@ -121,18 +107,6 @@ class MyHTTPPasswordMgr(passwordmgr):
 			return self._cache[theKey]
 
 		if not thePassword:
-			for theExpression, theReplacement in self.expressions.items():
-				theMatch = theExpression.match(str(authuri))
-				if theMatch:
-					try:
-						newauthuri = theMatch.expand(theReplacement)
-					except Exception, e:
-						raise util.Abort(_('hgkeychain: Could not expand expression'))
-					if newauthuri:
-						logger.info('Replacing original URL of (%s) with (%s)' % (authuri if len(authuri) < 50 else authuri[:47] + '...' , newauthuri))
-						authuri = newauthuri
-						break
-
 			parsed_url = urlparse.urlparse(keychainUri)
 			port = parsed_url.port if parsed_url.port else 0
 
@@ -158,5 +132,3 @@ def uisetup(ui):
 	theConfig = dict(ui.configitems('hgkeychain'))
 	if 'logging' in theConfig:
 		logger.setLevel(int(theConfig['logging']))
-
-	MyHTTPPasswordMgr.url_replacements = ui.configitems('hgkeychain_url_replacements')
