@@ -6,14 +6,13 @@ Requirements
 ============
 Mac OS X 10.5+ (should work on older OSes but only tested on 10.5 and 10.6)
 Python 2.5 (should work on older versions of Python but only tested on 2.5 and 2.6)
-Mercurial 0.9+ (works on 1.0 through 1.3)
-My pykeychain Python Module
+Mercurial 0.9+ (works on 1.0 through 1.3, 1.3 or higher is recommended)
 
 Installation
 ============
 The easiest way to install hgkeychain is to use easy_install or pip:
 
-	sudo easy_install -U pykeychain
+	sudo easy_install -U hgkeychain
 
 (The sudo command may be optional depending on your machine's set up)
 

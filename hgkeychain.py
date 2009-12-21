@@ -31,7 +31,7 @@ except:
 import logging
 import urlparse
 import urllib2
-import keychain
+import subprocess
 import re
 
 ########################################################################################
@@ -53,6 +53,26 @@ def monkeypatch_class(name, bases, namespace):
 		if name != "__metaclass__":
 			setattr(base, name, value)
 	return base
+
+########################################################################################
+
+def FindInternetPassword(host, accountName, port, path):
+	theArguments = ['security', 'find-internet-password', '-s', host, '-a', accountName, '-P', str(port), '-p', path, '-g']
+	thePipe = subprocess.Popen(theArguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	theOutput = thePipe.stdout.read()
+	theOutput = thePipe.stderr.read()
+	theMatch = re.match(r'^password: "(.+)"$', theOutput)
+	if not theMatch:
+		return None
+	thePassword = theMatch.groups()[0]
+	return thePassword
+
+def AddInternetPassword(host, accountName, port, path, password):
+	theArguments = [ 'security', 'add-internet-password', '-s', host, '-a', accountName, '-P', str(port), '-p', path, '-w', password ]
+	thePipe = subprocess.Popen(theArguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	theOutput = thePipe.stdout.read()
+	theOutput = thePipe.stderr.read()
+	return
 
 ########################################################################################
 
@@ -107,13 +127,13 @@ class MyHTTPPasswordMgr(passwordmgr):
 			port = parsed_url.port if parsed_url.port else 0
 
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-			thePassword, theKeychainItem = keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
+			thePassword = FindInternetPassword(host = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
 					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-					keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
+					AddInternetPassword(host = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
 
 			if thePassword:
 				self._cache[theKey] = (theUsername, thePassword)
