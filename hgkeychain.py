@@ -32,11 +32,6 @@ import logging
 import urlparse
 import urllib2
 import keychain
-
-try:
-	import json
-except:
-	import simplejson as json
 import re
 
 ########################################################################################
