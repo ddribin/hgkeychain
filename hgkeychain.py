@@ -69,8 +69,8 @@ def FindInternetPassword(scheme, host, port, path, accountName):
 
 def AddInternetPassword(scheme, host, port, path, accountName, password):
 	theArguments = [ 'security', 'add-internet-password', '-U',
-	    '-r', scheme, '-s', host, '-P', str(port), '-p', path,
-	     '-a', accountName, '-w', password ]
+		'-r', scheme, '-s', host, '-P', str(port), '-p', path,
+		'-a', accountName, '-w', password ]
 	thePipe = subprocess.Popen(theArguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	theOutput = thePipe.stdout.read()
 	theOutput = thePipe.stderr.read()
@@ -127,11 +127,11 @@ class MyHTTPPasswordMgr(passwordmgr):
 		if not thePassword:
 			parsed_url = urlparse.urlparse(keychainUri)
 			port = parsed_url.port if parsed_url.port else 0
-            # Keychain API uses four character codes for the scheme
-            # (kSecProtocolTypeHTTP or kSecProtocolTypeHTTPS)
+			# Keychain API uses four character codes for the scheme
+			# (kSecProtocolTypeHTTP or kSecProtocolTypeHTTPS)
 			scheme = 'http'
 			if parsed_url.scheme == 'https':
-			    scheme = 'htps'
+				scheme = 'htps'
 
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
 			thePassword = FindInternetPassword(scheme = scheme, host = parsed_url.netloc, port = port, path = parsed_url.path, accountName = theUsername)
