@@ -56,8 +56,8 @@ def monkeypatch_class(name, bases, namespace):
 
 ########################################################################################
 
-def FindInternetPassword(host, accountName, port, path):
-	theArguments = ['security', 'find-internet-password', '-s', host, '-a', accountName, '-P', str(port), '-p', path, '-g']
+def FindInternetPassword(scheme, host, port, path, accountName):
+	theArguments = ['security', 'find-internet-password', '-a', accountName, '-r', scheme, '-s', host, '-P', str(port), '-p', path, '-g']
 	thePipe = subprocess.Popen(theArguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	theOutput = thePipe.stdout.read()
 	theOutput = thePipe.stderr.read()
@@ -67,8 +67,10 @@ def FindInternetPassword(host, accountName, port, path):
 	thePassword = theMatch.groups()[0]
 	return thePassword
 
-def AddInternetPassword(host, accountName, port, path, password):
-	theArguments = [ 'security', 'add-internet-password', '-s', host, '-a', accountName, '-P', str(port), '-p', path, '-w', password ]
+def AddInternetPassword(scheme, host, port, path, accountName, password):
+	theArguments = [ 'security', 'add-internet-password', '-U',
+	    '-r', scheme, '-s', host, '-P', str(port), '-p', path,
+	     '-a', accountName, '-w', password ]
 	thePipe = subprocess.Popen(theArguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	theOutput = thePipe.stdout.read()
 	theOutput = thePipe.stderr.read()
@@ -125,15 +127,20 @@ class MyHTTPPasswordMgr(passwordmgr):
 		if not thePassword:
 			parsed_url = urlparse.urlparse(keychainUri)
 			port = parsed_url.port if parsed_url.port else 0
+            # Keychain API uses four character codes for the scheme
+            # (kSecProtocolTypeHTTP or kSecProtocolTypeHTTPS)
+			scheme = 'http'
+			if parsed_url.scheme == 'https':
+			    scheme = 'htps'
 
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-			thePassword = FindInternetPassword(host = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
+			thePassword = FindInternetPassword(scheme = scheme, host = parsed_url.netloc, port = port, path = parsed_url.path, accountName = theUsername)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
 					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-					AddInternetPassword(host = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
+					AddInternetPassword(scheme = scheme, host = parsed_url.hostname, port = port, path = parsed_url.path, accountName = theUsername, password = thePassword)
 
 			if thePassword:
 				self._cache[theKey] = (theUsername, thePassword)
