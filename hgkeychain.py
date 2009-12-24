@@ -87,7 +87,7 @@ class MyHTTPPasswordMgr(passwordmgr):
 		keychainUri = authuri
 		if auth:
 			keychainUri = self.prefixUrl(authuri, auth.get('prefix'))
-		logger.debug("auth url: %s, keychain url: %s\n" % (authuri, keychainUri) )
+		logger.debug("Using URL for keychain: %s\n" % (keychainUri) )
 
 		if not theUsername and auth:
 			theUsername, thePassword = auth.get('username'), auth.get('password')
