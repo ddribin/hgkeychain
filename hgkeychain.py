@@ -105,15 +105,19 @@ class MyHTTPPasswordMgr(passwordmgr):
 		if not thePassword:
 			parsed_url = urlparse.urlparse(keychainUri)
 			port = parsed_url.port if parsed_url.port else 0
+			if parsed_url.scheme == 'https':
+				protocol = keychain.kSecProtocolTypeHTTPS
+			else:
+				protocol = keychain.kSecProtocolTypeHTTP
 
 			logger.info('Searching for username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-			thePassword, theKeychainItem = keychain.FindInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
+			thePassword, theKeychainItem = keychain.FindInternetPassword(protocol = protocol, serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path)
 
 			if not thePassword:
 				thePassword = self.ui.getpass(_('password for user \'%s\': ') % theUsername)
 				if thePassword:
 					logger.info('Storing username (%s) and url (%s) in keychain' % (theUsername, keychainUri))
-					keychain.AddInternetPassword(serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
+					keychain.AddInternetPassword(protocol = protocol, serverName = parsed_url.netloc, accountName = theUsername, port = port, path = parsed_url.path, password = thePassword)
 
 			if thePassword:
 				self._cache[theKey] = (theUsername, thePassword)
